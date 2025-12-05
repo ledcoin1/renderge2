@@ -3,28 +3,72 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Backend Test</title>
+  <title>Тас-Қағаз-Қайшы</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 500px; margin: 30px auto; }
+    button { margin: 5px; padding: 10px 20px; font-size: 16px; }
+    input { width: 60px; font-size: 16px; }
+    #result { margin-top: 20px; font-weight: bold; }
+  </style>
 </head>
 <body>
-  <h1>Backend Test Interface</h1>
-  <button id="testBtn">Тексеру</button>
+  <h1>Тас-Қағаз-Қайшы</h1>
+
+  <p>Сіздің баланс: <span id="balance">-</span></p>
+
+  <label>Ставка: <input type="number" id="bet" value="10" min="1" /></label><br><br>
+
+  <button onclick="play('тас')">Тас</button>
+  <button onclick="play('қағаз')">Қағаз</button>
+  <button onclick="play('қайшы')">Қайшы</button>
+
   <p id="result"></p>
 
   <script>
     const backendURL = "https://backend-test-q8to.onrender.com";
+    const userId = "user1"; // бір қолданушы ID тест үшін
 
-    document.getElementById("testBtn").addEventListener("click", async () => {
+    async function updateBalance() {
+      try {
+        const res = await fetch(`${backendURL}/getBalance`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId })
+        });
+        const data = await res.json();
+        document.getElementById("balance").textContent = data.balance;
+      } catch (err) {
+        document.getElementById("balance").textContent = "Қате";
+      }
+    }
+
+    async function play(choice) {
+      const bet = Number(document.getElementById("bet").value);
       const resultEl = document.getElementById("result");
-      resultEl.textContent = "Жүктелуде...";
+      resultEl.textContent = "Ойнап жатыр…";
 
       try {
-        const res = await fetch(`${backendURL}/ping`);
+        const res = await fetch(`${backendURL}/play`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId, choice, bet })
+        });
         const data = await res.json();
-        resultEl.textContent = "Server жауап берді: " + data.message;
+
+        if (data.error) {
+          resultEl.textContent = data.error;
+        } else {
+          resultEl.textContent =
+            `Сіз таңдадыңыз: ${choice}, Компьютер: ${data.computerChoice}, Нәтиже: ${data.result}`;
+          document.getElementById("balance").textContent = data.balance;
+        }
       } catch (err) {
         resultEl.textContent = "Қате: " + err.message;
       }
-    });
+    }
+
+    // Бастапқы баланс
+    updateBalance();
   </script>
 </body>
 </html>
