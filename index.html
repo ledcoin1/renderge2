@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Backend Test</title>
+</head>
+<body>
+  <h1>Backend Test Interface</h1>
+  <button id="testBtn">Тексеру</button>
+  <p id="result"></p>
+
+  <script>
+    const backendURL = "https://backend-test-q8to.onrender.com";
+
+    document.getElementById("testBtn").addEventListener("click", async () => {
+      const resultEl = document.getElementById("result");
+      resultEl.textContent = "Жүктелуде...";
+
+      try {
+        const res = await fetch(`${backendURL}/ping`);
+        const data = await res.json();
+        resultEl.textContent = "Server жауап берді: " + data.message;
+      } catch (err) {
+        resultEl.textContent = "Қате: " + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
