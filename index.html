@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Тас-Қағаз-Қайшы</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     body {
       font-family: 'Arial', sans-serif;
@@ -101,8 +102,11 @@
   <div id="result">Нәтиже осы жерде шығады</div>
 
   <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand(); // толық экранға шығару
+
     const backendURL = "https://backend-test-q8to.onrender.com";
-    const userId = "user1";
+    const userId = tg.initDataUnsafe.user.id; // Telegram қолданушы ID
 
     async function updateBalance() {
       try {
@@ -150,6 +154,7 @@
       }
     }
 
+    // Бастапқы баланс
     updateBalance();
   </script>
 </body>
